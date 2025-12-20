@@ -4,7 +4,7 @@ data = pandas.read_csv('data/daily_sales_data_0.csv', index_col='Product', parse
 
 data = data.loc[['pink morsel']] # Filters Data to Display 'Pink Morsel' Product Only
 
-data['Date'] = data['Date'].dt.strftime('%d-%b-%Y') # Formats Date Col to 'DD-MMM-YYYY' Format (Localisation fo Australia)
+data['Date'] = data['Date'].dt.strftime('%d-%b-%Y') # Formats Date Col to 'DD-MMM-YYYY' Format (Localisation for Australia)
 
 data['Sales'] = data['Price'].str.replace('$', '').astype(float) * data['Quantity'] # Operation to Multiply Price & Quantity = Sales
 data['Sales'] = '$' + data['Sales'].astype(str) # Formats Sales Col to Include $, Converts Sales to Type String for Data Display
