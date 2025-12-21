@@ -1,4 +1,4 @@
-product,price,quantity,date,region
+Product,Price,Quantity,Date,Region
 pink morsel,$3.00,545,2019-06-11,north
 pink morsel,$3.00,521,2019-06-11,south
 pink morsel,$3.00,595,2019-06-11,east
