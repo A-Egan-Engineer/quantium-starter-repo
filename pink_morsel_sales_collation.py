@@ -1,15 +1,15 @@
 # Imports Pandas Library for Data Manipulation
 import pandas as pd 
 # Imports Glob Library for File Pattern Matching
-import glob 
+import glob as gl
 
 # Accesses All CSV Files in data Folder with daily_sales_data_ Prefix
-csv_files = glob.glob('data/daily_sales_data_*.csv')  
+csv_files = gl.glob('data/daily_sales_data_*.csv')  
 
 # Initialises Empty DataFrame for Future Data Storage
 all_data = pd.DataFrame()
 
-# Allows Max Rows to be Displayed in Output (Optional)
+# Allows Max Rows to be Displayed in Terminal Output (Optional)
 # pd.set_option('display.max_rows', None)  
 
 for file in csv_files:
