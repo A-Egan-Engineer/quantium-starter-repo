@@ -8,6 +8,8 @@ import pandas as pd
 # Assign Pink Morsels Sales Data to DataFrame Variable
 df = pd.read_csv('data/pink_morsel_sales_data.csv') 
 
+region = df['Region']
+
 # Initialises Dash App
 app = Dash(__name__) 
 
@@ -19,13 +21,29 @@ app.layout = html.Div([
 
     html.H1(children='Pink Morsel Sales Dashboard', style={'textAlign': 'center'}),
 
-    dcc.Graph( id='Pink Morsel Sales Over Time', figure=px.line(df, x='Date', y='Sales', title='Pink Morsel Sales Over Time')),
+    dcc.Graph( id='PMSOT', figure=px.line(df, x='Date', y='Sales', title='Pink Morsel Sales Over Time')),
 
     dcc.RadioItems(
         list(all_options),
-        id = 'region-radios',
+        value = 'All',
+        id = 'region_radios',
     )
 ])
+
+@app.callback(
+Output(component_id= 'PMSOT', component_property= 'figure'),
+Input(component_id= 'region_radios', component_property= 'value')
+)
+def update_graph(region_chosen):
+    if region_chosen == 'All':
+        dff = df
+        print('User Chose: All Regions Sales Data')
+    else:
+        dff = df[region] == region_chosen
+        print(f'User Chose: {region_chosen} Region Sales Data')
+
+    figure = px.line(dff, x='Date', y='Sales', title='Pink Morsel Sales Over Time')
+    return figure
 
 # Runs Dash App
 if __name__ == '__main__':
