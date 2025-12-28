@@ -1,50 +1,49 @@
-# Imports Required Libraries for Dash App
-from dash import Dash, html, dcc, Input, Output, callback
-# Imports Plotly for Data Visualisation
+from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
-#Imporets Pandas for Further Data Manipulation
 import pandas as pd
 
-# Assign Pink Morsels Sales Data to DataFrame Variable
-df = pd.read_csv('data/pink_morsel_sales_data.csv') 
+# Data Access and Prep
+df = pd.DataFrame()
+df = pd.read_csv('data/pink_morsel_sales_data.csv')
 
-region = df['Region']
+# Intialise Dash App
+app = Dash(__name__)
 
-# Initialises Dash App
-app = Dash(__name__) 
+# Dash App Layout
+app.layout = html.Div(children=[
 
-# Variable to Create Radio Btn Options
-all_options = {'South', 'East', 'All', 'North', 'West'}
-
-#Dash App Layout Config
-app.layout = html.Div([
-
-    html.H1(children='Pink Morsel Sales Dashboard', style={'textAlign': 'center'}),
-
-    dcc.Graph( id='PMSOT', figure=px.line(df, x='Date', y='Sales', title='Pink Morsel Sales Over Time')),
-
-    dcc.RadioItems(
-        list(all_options),
-        value = 'All',
-        id = 'region_radios',
-    )
+    # Dashboard Title
+    html.H1(children = 'Pink Morsel Sales Dashboard', style = {'textAlign': 'center'}),
+    
+    # Graph 
+    dcc.Graph(id = 'sales-graph'),
+     
+    # Radio Buttons for Region Filtration
+    html.Div([
+        html.Label('Select Region:', style={'fontWeight': 'bold', 'marginRight': '10px'}),
+        dcc.RadioItems(
+            id = 'region-filter',
+            options = [{'label': region.capitalize(), 'value': region} for region in (df['Region'].unique().tolist() + ['All'])],
+            value = 'north',
+            inline = True
+        )
+    ]),
 ])
 
+# Callback to Update Graph (Based on Region Selection)
 @app.callback(
-Output(component_id= 'PMSOT', component_property= 'figure'),
-Input(component_id= 'region_radios', component_property= 'value')
-)
-def update_graph(region_chosen):
-    if region_chosen == 'All':
-        dff = df
-        print('User Chose: All Regions Sales Data')
+    Output('sales-graph', 'figure'),
+    Input('region-filter', 'value')
+) # Function to Update Graph (Based on Selected Region)
+def update_graph(selected_region):
+    if selected_region == 'All':
+        fig = px.line(df, x = 'Date', y = 'Sales', title = 'Pink Morsel Sales Over Time - All Regions')
+        return fig
     else:
-        dff = df[region] == region_chosen
-        print(f'User Chose: {region_chosen} Region Sales Data')
+        filtered_df = df[df['Region'] == selected_region]
+        fig = px.line(filtered_df, x = 'Date', y = 'Sales', title = f'Pink Morsel Sales Over Time - {selected_region.capitalize()} Region')
+    return fig
 
-    figure = px.line(dff, x='Date', y='Sales', title='Pink Morsel Sales Over Time')
-    return figure
-
-# Runs Dash App
+# Run the Dash App
 if __name__ == '__main__':
     app.run(debug=True)
